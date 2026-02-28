@@ -5,7 +5,7 @@ const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
 // Client crée une réservation
 const creerReservation = async (req, res) => {
-  const { prestationId, boutiqueId, date, note } = req.body;
+  const { prestationId, boutiqueId, date,heure, note } = req.body;
 
   if (!prestationId || !boutiqueId || !date || !heure) {
     return res.status(400).json({ message: 'prestationId, boutiqueId, date et heure sont obligatoires' });
