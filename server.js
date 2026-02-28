@@ -2,9 +2,13 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
+const bookingRoutes = require('./src/routes/booking.routes');
+
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+app.use('/booking', bookingRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'booking-service fonctionne !' });

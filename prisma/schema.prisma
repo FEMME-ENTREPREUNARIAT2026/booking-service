@@ -1,14 +1,38 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+model Reservation {
+  id           String   @id @default(uuid())
+  clientId     String
+  prestationId String
+  boutiqueId   String
+  date         DateTime
+  heure        String
+  statut       Statut   @default(EN_ATTENTE)
+  note         String?
+  createdAt    DateTime @default(now())
+  avis         Avis?
+}
+
+model Avis {
+  id            String      @id @default(uuid())
+  reservationId String      @unique
+  reservation   Reservation @relation(fields: [reservationId], references: [id])
+  clientId      String
+  boutiqueId    String
+  note          Int
+  commentaire   String?
+  createdAt     DateTime    @default(now())
+}
+
+enum Statut {
+  EN_ATTENTE
+  CONFIRME
+  ANNULE
+  TERMINE
 }
