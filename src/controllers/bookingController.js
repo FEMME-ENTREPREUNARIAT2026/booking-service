@@ -46,6 +46,15 @@ const mesReservations = async (req, res) => {
 // Prestataire voit les réservations de sa boutique
 const reservationsBoutique = async (req, res) => {
   try {
+    const boutiqueRes = await fetch(`${process.env.CATALOGUE_SERVICE_URL}/boutiques/${req.params.boutiqueId}`);
+    if (!boutiqueRes.ok) {
+      return res.status(404).json({ message: 'Boutique introuvable' });
+    }
+    const boutique = await boutiqueRes.json();
+    if (boutique.prestataireId !== req.user.userId) {
+      return res.status(403).json({ message: 'Accès refusé : cette boutique ne vous appartient pas' });
+    }
+
     const reservations = await prisma.reservation.findMany({
       where: { boutiqueId: req.params.boutiqueId },
       include: { avis: true },
