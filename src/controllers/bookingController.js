@@ -119,6 +119,19 @@ const laisserAvis = async (req, res) => {
       }
     });
 
+    // Recalculer et synchroniser la noteMoyenne dans catalogue-service
+    const tousLesAvis = await prisma.avis.findMany({
+      where: { boutiqueId: reservation.boutiqueId }
+    });
+    const nouvelleMoyenne = parseFloat(
+      (tousLesAvis.reduce((sum, a) => sum + a.note, 0) / tousLesAvis.length).toFixed(2)
+    );
+    fetch(`${process.env.CATALOGUE_SERVICE_URL}/boutiques/${reservation.boutiqueId}/note-moyenne`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ noteMoyenne: nouvelleMoyenne }),
+    }).catch(() => {}); // non bloquant
+
     res.status(201).json(avis);
   } catch (error) {
     console.error(error);
